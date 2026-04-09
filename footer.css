@@ -1,0 +1,311 @@
+/* CSS VARIABLES & RESET */
+:root {
+  --dvgPrimary: #102973;
+  --dvgBackground: #e4ebff;
+  --dvgWhite: #ffffff;
+  --dvgGlass: rgba(255, 255, 255, 0.4);
+  --dvgShadow: 0 -10px 40px rgba(16, 41, 115, 0.05);
+  --dvgTransition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* FOOTER BASE */
+.dvgFooter {
+  background: linear-gradient(
+    180deg,
+    var(--dvgWhite) 0%,
+    var(--dvgBackground) 100%
+  );
+  padding: 80px 25px 30px 25px;
+  color: var(--dvgPrimary);
+  border-top: 1px solid rgba(16, 41, 115, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.dvgFooterContainer {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  text-align: left; /* Mobile First: Left Aligned */
+}
+
+/* TYPOGRAPHY */
+.dvgTitle {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.dvgTitle::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 30px;
+  height: 3px;
+  background: var(--dvgPrimary);
+  border-radius: 2px;
+  transition: var(--dvgTransition);
+}
+
+.dvgFooter:hover .dvgTitle::after {
+  width: 50px;
+}
+
+/* SECTION 1: LOGO & DESC */
+.dvgLogoSection {
+  max-width: 400px;
+}
+
+.dvgLogoImg {
+  height: 70px;
+  margin-bottom: 20px;
+  display: block;
+  width: auto;
+}
+
+.dvgDescription {
+  line-height: 1.8;
+  font-size: 15px;
+  opacity: 0.8;
+}
+
+/* SECTION 2: QUICK LINKS */
+.dvgLinkList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.dvgLinkItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--dvgPrimary);
+  font-weight: 600;
+  font-size: 15px;
+  transition: var(--dvgTransition);
+  width: fit-content;
+}
+
+.dvgLinkItem svg {
+  width: 18px;
+  height: 18px;
+  transition: var(--dvgTransition);
+}
+
+.dvgLinkItem:hover {
+  transform: translateX(8px);
+}
+
+.dvgLinkItem:hover svg {
+  transform: scale(1.2);
+}
+
+/* SECTION 3: LATEST NEWS */
+.dvgNewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dvgNewsItem {
+  cursor: pointer;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(16, 41, 115, 0.08);
+  transition: var(--dvgTransition);
+}
+
+.dvgNewsDate {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.6;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.dvgNewsTitle {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.dvgNewsItem:hover {
+  border-bottom-color: var(--dvgPrimary);
+  transform: translateY(-2px);
+}
+
+/* SECTION 4: NEWSLETTER & ADDRESS */
+.dvgNewsletterWrapper {
+  margin-bottom: 30px;
+}
+
+.dvgInputGroup {
+  display: flex;
+  background: var(--dvgWhite);
+  padding: 6px;
+  border-radius: 50px;
+  box-shadow: 0 5px 15px rgba(16, 41, 115, 0.05);
+  border: 2px solid transparent;
+  transition: var(--dvgTransition);
+  max-width: 350px;
+}
+
+.dvgInputGroup:focus-within {
+  border-color: var(--dvgPrimary);
+  box-shadow: 0 8px 25px rgba(16, 41, 115, 0.1);
+}
+
+.dvgEmailInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0 20px;
+  font-size: 14px;
+  color: var(--dvgPrimary);
+  outline: none;
+}
+
+.dvgSubscribeBtn {
+  background: var(--dvgPrimary);
+  color: var(--dvgWhite);
+  border: none;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--dvgTransition);
+}
+
+.dvgSubscribeBtn:hover {
+  box-shadow: 0 0 15px rgba(16, 41, 115, 0.4);
+  transform: scale(1.03);
+}
+
+.dvgAddressBox {
+  margin-top: 30px;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.dvgAddressInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dvgAddressInfo svg {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+}
+
+/* SOCIAL ICONS */
+.dvgSocialWrapper {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.dvgSocialIcon {
+  width: 45px;
+  height: 45px;
+  background: var(--dvgWhite);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--dvgPrimary);
+  transition: var(--dvgTransition);
+  box-shadow: 0 4px 10px rgba(16, 41, 115, 0.05);
+}
+
+.dvgSocialIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.dvgSocialIcon:hover {
+  background: var(--dvgPrimary);
+  color: var(--dvgWhite);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(16, 41, 115, 0.2);
+}
+
+/* COPYRIGHT */
+.dvgCopyright {
+  margin-top: 80px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(16, 41, 115, 0.08);
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.6;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* DESKTOP LAYOUT */
+@media (min-width: 1024px) {
+  .dvgFooterContainer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+
+  .dvgLogoSection {
+    flex: 1.2;
+    min-width: 300px;
+  }
+  .dvgQuickLinksSection {
+    flex: 0.8;
+  }
+  .dvgNewsSection {
+    flex: 1;
+  }
+  .dvgNewsletterSection {
+    flex: 1.2;
+  }
+
+  .dvgCopyright {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+/* ANIMATIONS */
+@keyframes dvgFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dvgAnimate {
+  animation: dvgFadeUp 0.8s ease forwards;
+}

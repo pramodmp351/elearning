@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STACKLY Admin | Dashboard</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      :root {
+        --dvgPrimary: #102973;
+        --dvgBackground: #e4ebff;
+        --dvgWhite: #ffffff;
+        --dvgGlass: rgba(255, 255, 255, 0.4);
+        --dvgShadow: 0 10px 40px rgba(16, 41, 115, 0.05);
+        --dvgTransition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        --sidebarWidth: 260px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background-color: var(--dvgBackground);
+        color: var(--dvgPrimary);
+        min-height: 100vh;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+        width: 100%;
+      }
+
+      /* Sidebar Styling */
+      .dvg-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: var(--sidebarWidth);
+        background: var(--dvgPrimary);
+        color: white;
+        z-index: 1001; /* Higher than overlay */
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(-100%); /* Hidden by default on mobile */
+        transition: var(--dvgTransition);
+      }
+
+      .dvg-sidebar.active {
+        transform: translateX(0);
+      }
+
+      .dvg-sidebar-header {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .dvg-nav {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .dvg-nav-item {
+        padding: 12px 16px;
+        border-radius: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: var(--dvgTransition);
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 500;
+      }
+
+      .dvg-nav-item:hover,
+      .dvg-nav-item.active {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .dvg-nav-item.logout {
+        margin-top: auto;
+        color: #ff4d4d;
+      }
+
+      /* Overlay */
+      .dvg-sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(16, 41, 115, 0.5);
+        z-index: 1000;
+        display: none;
+        backdrop-filter: blur(4px);
+      }
+
+      /* Main Content */
+      .dvg-main {
+        margin-left: 0;
+        padding: 16px;
+        width: 100%;
+        transition: var(--dvgTransition);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Top Header */
+      .dvg-header {
+        background: var(--dvgWhite);
+        padding: 12px 16px;
+        border-radius: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: var(--dvgShadow);
+        margin-bottom: 20px;
+        opacity: 0;
+        width: 100%;
+      }
+
+      .dvg-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .dvg-menu-toggle {
+        cursor: pointer;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--dvgBackground);
+        border-radius: 10px;
+      }
+
+      .dvg-page-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
+      }
+
+      .dvg-header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .dvg-user-info {
+        text-align: right;
+        display: none; /* Hidden on small mobile */
+      }
+
+      .dvg-user-email {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        opacity: 0.8;
+      }
+
+      .dvg-avatar {
+        width: 36px;
+        height: 36px;
+        background: var(--dvgPrimary);
+        color: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+      }
+
+      /* Stats Cards - Responsive Grid */
+      .dvg-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+        width: 100%;
+      }
+
+      .dvg-card {
+        background: var(--dvgWhite);
+        padding: 16px;
+        border-radius: 16px;
+        box-shadow: var(--dvgShadow);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: var(--dvgTransition);
+        opacity: 0;
+        min-width: 0; /* Allow shrinking */
+      }
+
+      .dvg-card-icon {
+        width: 36px;
+        height: 36px;
+        background: var(--dvgBackground);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--dvgPrimary);
+      }
+
+      .dvg-card-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .dvg-stat-value {
+        font-size: 1.25rem;
+        font-weight: 800;
+        word-break: break-all;
+      }
+
+      .dvg-stat-label {
+        color: #666;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      /* Dashboard Sections */
+      .dvg-section {
+        display: none;
+        width: 100%;
+      }
+
+      .dvg-section.active {
+        display: block;
+      }
+
+      /* Charts Section */
+      .dvg-charts-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        width: 100%;
+      }
+
+      .dvg-chart-card {
+        background: var(--dvgWhite);
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: var(--dvgShadow);
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .dvg-chart-card h3 {
+        font-size: 1rem;
+        margin-bottom: 16px;
+      }
+
+      canvas {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+
+      /* Tables - Improved Mobile Visibility */
+      .dvg-table-container {
+        background: var(--dvgWhite);
+        border-radius: 16px;
+        padding: 0;
+        overflow-x: auto;
+        box-shadow: var(--dvgShadow);
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 500px; /* Force scroll on very small screens to keep data legible */
+      }
+
+      th {
+        text-align: left;
+        padding: 14px;
+        border-bottom: 2px solid var(--dvgBackground);
+        font-size: 0.75rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      td {
+        padding: 14px;
+        border-bottom: 1px solid var(--dvgBackground);
+        font-size: 0.85rem;
+      }
+
+      .dvg-status-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        display: inline-block;
+      }
+
+      .status-active {
+        background: #e6fcf5;
+        color: #0ca678;
+      }
+      .status-pending {
+        background: #fff9db;
+        color: #f08c00;
+      }
+
+      /* Settings Form */
+      .dvg-settings-grid {
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .dvg-form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .dvg-input-field {
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        background: var(--dvgBackground);
+        font-size: 0.95rem;
+        width: 100%;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .dvg-input-field:focus {
+        border-color: var(--dvgPrimary);
+      }
+
+      /* Responsive Breakpoints */
+      @media (min-width: 640px) {
+        .dvg-page-title {
+          max-width: none;
+          font-size: 1.25rem;
+        }
+        .dvg-stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .dvg-user-info {
+          display: block;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .dvg-sidebar {
+          transform: translateX(0);
+        }
+        .dvg-main {
+          margin-left: var(--sidebarWidth);
+          padding: 32px;
+          width: calc(100% - var(--sidebarWidth));
+        }
+        .dvg-menu-toggle {
+          display: none;
+        }
+        .dvg-header {
+          padding: 16px 24px;
+          margin-bottom: 32px;
+        }
+        .dvg-stats-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+        }
+        .dvg-charts-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 24px;
+        }
+        .dvg-card {
+          padding: 24px;
+        }
+        .dvg-stat-value {
+          font-size: 1.75rem;
+        }
+      }
+
+      /* Handle extremely small screens */
+      @media (max-width: 350px) {
+        .dvg-stats-grid {
+          grid-template-columns: 1fr;
+        }
+        .dvg-header-right {
+          gap: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="dvg-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="dvg-sidebar" id="sidebar">
+      <div class="dvg-sidebar-header">
+        <i data-lucide="layers"></i>
+        STACKLY
+      </div>
+      <nav class="dvg-nav">
+        <div
+          class="dvg-nav-item active"
+          data-section="dashboard"
+          onclick="switchSection('dashboard', this)"
+        >
+          <i data-lucide="layout-dashboard"></i> Dashboard
+        </div>
+        <div
+          class="dvg-nav-item"
+          data-section="analytics"
+          onclick="switchSection('analytics', this)"
+        >
+          <i data-lucide="bar-chart-3"></i> Analytics
+        </div>
+        <div
+          class="dvg-nav-item"
+          data-section="users"
+          onclick="switchSection('users', this)"
+        >
+          <i data-lucide="users"></i> Users
+        </div>
+        <div
+          class="dvg-nav-item"
+          data-section="messages"
+          onclick="switchSection('messages', this)"
+        >
+          <i data-lucide="mail"></i> Messages
+        </div>
+        <div
+          class="dvg-nav-item"
+          data-section="settings"
+          onclick="switchSection('settings', this)"
+        >
+          <i data-lucide="settings"></i> Settings
+        </div>
+        <div class="dvg-nav-item logout" id="sidebarLogout">
+          <i data-lucide="log-out"></i> Logout
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dvg-main">
+      <!-- Header -->
+      <header class="dvg-header" id="header">
+        <div class="dvg-header-left">
+          <div class="dvg-menu-toggle" id="menuToggle">
+            <i data-lucide="menu"></i>
+          </div>
+          <h1 class="dvg-page-title" id="currentTitle">Dashboard</h1>
+        </div>
+        <div class="dvg-header-right">
+          <div class="dvg-user-info">
+            <span class="dvg-user-email" id="userEmail">admin@stackly.com</span>
+          </div>
+          <div class="dvg-avatar" id="userInitials">AD</div>
+        </div>
+      </header>
+
+      <!-- Dashboard Section -->
+      <div id="dashboardSection" class="dvg-section active">
+        <div class="dvg-stats-grid">
+          <div class="dvg-card">
+            <div class="dvg-card-icon"><i data-lucide="users"></i></div>
+            <span class="dvg-stat-label">Total Users</span>
+            <span class="dvg-stat-value" data-target="1284">0</span>
+          </div>
+          <div class="dvg-card">
+            <div class="dvg-card-icon"><i data-lucide="user-check"></i></div>
+            <span class="dvg-stat-label">Active Clients</span>
+            <span class="dvg-stat-value" data-target="942">0</span>
+          </div>
+          <div class="dvg-card">
+            <div class="dvg-card-icon"><i data-lucide="server"></i></div>
+            <span class="dvg-stat-label">Server Status</span>
+            <span class="dvg-stat-value" style="color: #2f9e44">99.9%</span>
+          </div>
+          <div class="dvg-card">
+            <div class="dvg-card-icon"><i data-lucide="dollar-sign"></i></div>
+            <span class="dvg-stat-label">Monthly Revenue</span>
+            <span class="dvg-stat-value" data-target="42500">$0</span>
+          </div>
+        </div>
+
+        <div class="dvg-charts-grid">
+          <div class="dvg-chart-card">
+            <h3>Traffic Overview</h3>
+            <div style="position: relative; height: 250px; width: 100%">
+              <canvas id="lineChart"></canvas>
+            </div>
+          </div>
+          <div class="dvg-chart-card">
+            <h3>Monthly New Users</h3>
+            <div style="position: relative; height: 250px; width: 100%">
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Section -->
+      <div id="usersSection" class="dvg-section">
+        <div class="dvg-table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="font-weight: 600">Alex Johnson</div>
+                  <div style="font-size: 0.75rem; color: #666">
+                    alex@stackly.com
+                  </div>
+                </td>
+                <td>Client</td>
+                <td>
+                  <span class="dvg-status-badge status-active">Active</span>
+                </td>
+                <td>
+                  <button
+                    class="dvg-input-field"
+                    style="padding: 6px 10px; font-size: 0.75rem; width: auto"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight: 600">Sarah Miller</div>
+                  <div style="font-size: 0.75rem; color: #666">
+                    sarah@stackly.com
+                  </div>
+                </td>
+                <td>Admin</td>
+                <td>
+                  <span class="dvg-status-badge status-active">Active</span>
+                </td>
+                <td>
+                  <button
+                    class="dvg-input-field"
+                    style="padding: 6px 10px; font-size: 0.75rem; width: auto"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight: 600">David Chen</div>
+                  <div style="font-size: 0.75rem; color: #666">
+                    david@stackly.com
+                  </div>
+                </td>
+                <td>Client</td>
+                <td>
+                  <span class="dvg-status-badge status-pending">Pending</span>
+                </td>
+                <td>
+                  <button
+                    class="dvg-input-field"
+                    style="padding: 6px 10px; font-size: 0.75rem; width: auto"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Messages Section -->
+      <div id="messagesSection" class="dvg-section">
+        <div class="dvg-table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Sender</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Support Team</td>
+                <td>Server Update Scheduled</td>
+                <td>Oct 24</td>
+                <td>
+                  <button
+                    class="dvg-input-field"
+                    style="padding: 6px 10px; font-size: 0.75rem; width: auto"
+                  >
+                    Reply
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Analytics Section -->
+      <div id="analyticsSection" class="dvg-section">
+        <div class="dvg-charts-grid">
+          <div class="dvg-chart-card">
+            <h3>User Distribution</h3>
+            <div style="position: relative; height: 300px; width: 100%">
+              <canvas id="pieChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Section -->
+      <div id="settingsSection" class="dvg-section">
+        <div class="dvg-chart-card dvg-settings-grid">
+          <h2 style="font-size: 1.25rem; margin-bottom: 10px">
+            Profile Settings
+          </h2>
+          <div class="dvg-form-field">
+            <label class="dvg-stat-label">Admin Name</label>
+            <input
+              type="text"
+              class="dvg-input-field"
+              value="Main Administrator"
+            />
+          </div>
+          <div class="dvg-form-field">
+            <label class="dvg-stat-label">Email Address</label>
+            <input
+              type="text"
+              id="settingsEmail"
+              class="dvg-input-field"
+              readonly
+            />
+          </div>
+          <div class="dvg-form-field">
+            <label class="dvg-stat-label">System Notifications</label>
+            <select class="dvg-input-field">
+              <option>Enabled</option>
+              <option>Disabled</option>
+            </select>
+          </div>
+          <button
+            id="saveBtn"
+            class="dvg-input-field"
+            style="
+              background: var(--dvgPrimary);
+              color: white;
+              font-weight: 700;
+              margin-top: 10px;
+              cursor: pointer;
+            "
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Initialize Lucide
+      lucide.createIcons();
+
+      // 1. SESSION MANAGEMENT
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) {
+        window.location.href = "index.html";
+      } else {
+        document.getElementById("userEmail").textContent = user.email;
+        document.getElementById("settingsEmail").value = user.email;
+        document.getElementById("userInitials").textContent = user.email
+          .substring(0, 2)
+          .toUpperCase();
+      }
+
+      // 2. MOBILE MENU & OVERLAY
+      const menuToggle = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("sidebarOverlay");
+
+      const toggleSidebar = (show) => {
+        if (show) {
+          sidebar.classList.add("active");
+          overlay.style.display = "block";
+          document.body.style.overflow = "hidden"; // Prevent scroll when menu open
+        } else {
+          sidebar.classList.remove("active");
+          overlay.style.display = "none";
+          document.body.style.overflow = "";
+        }
+      };
+
+      menuToggle.onclick = () => toggleSidebar(true);
+      overlay.onclick = () => toggleSidebar(false);
+
+      // 3. SECTION SWITCHING
+      function switchSection(sectionId, element) {
+        toggleSidebar(false);
+
+        // Update Nav UI
+        document
+          .querySelectorAll(".dvg-nav-item")
+          .forEach((item) => item.classList.remove("active"));
+        element.classList.add("active");
+
+        // Show Section
+        document
+          .querySelectorAll(".dvg-section")
+          .forEach((sec) => sec.classList.remove("active"));
+        const targetSection = document.getElementById(sectionId + "Section");
+        if (targetSection) {
+          targetSection.classList.add("active");
+        }
+
+        document.getElementById("currentTitle").textContent =
+          sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        // Animate entry
+        gsap.fromTo(
+          "#" + sectionId + "Section",
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        );
+      }
+
+      // 4. LOGOUT
+      document.getElementById("sidebarLogout").onclick = () => {
+        localStorage.removeItem("user");
+        window.location.href = "index.html";
+      };
+
+      // 5. CHARTS INITIALIZATION (With responsive options)
+      function initCharts() {
+        const chartOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: { boxWidth: 12, padding: 15, font: { size: 11 } },
+            },
+          },
+        };
+
+        const ctxLine = document.getElementById("lineChart")?.getContext("2d");
+        if (ctxLine) {
+          new Chart(ctxLine, {
+            type: "line",
+            data: {
+              labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+              datasets: [
+                {
+                  label: "Visits",
+                  data: [65, 59, 80, 81, 56, 55, 40],
+                  borderColor: "#102973",
+                  backgroundColor: "rgba(16, 41, 115, 0.1)",
+                  fill: true,
+                  tension: 0.4,
+                },
+              ],
+            },
+            options: chartOptions,
+          });
+        }
+
+        const ctxBar = document.getElementById("barChart")?.getContext("2d");
+        if (ctxBar) {
+          new Chart(ctxBar, {
+            type: "bar",
+            data: {
+              labels: ["W1", "W2", "W3", "W4"],
+              datasets: [
+                {
+                  label: "Signups",
+                  data: [120, 190, 150, 210],
+                  backgroundColor: "#102973",
+                  borderRadius: 6,
+                },
+              ],
+            },
+            options: chartOptions,
+          });
+        }
+
+        const ctxPie = document.getElementById("pieChart")?.getContext("2d");
+        if (ctxPie) {
+          new Chart(ctxPie, {
+            type: "doughnut",
+            data: {
+              labels: ["Admins", "Users", "Guests"],
+              datasets: [
+                {
+                  data: [5, 65, 30],
+                  backgroundColor: ["#102973", "#4c6ef5", "#e4ebff"],
+                  borderWidth: 0,
+                },
+              ],
+            },
+            options: chartOptions,
+          });
+        }
+      }
+
+      // 6. LOAD ANIMATIONS
+      window.addEventListener("load", () => {
+        initCharts();
+
+        const tl = gsap.timeline();
+        tl.to("#header", { opacity: 1, duration: 0.5, ease: "power2.out" }).to(
+          ".dvg-card",
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.08,
+            duration: 0.6,
+            ease: "back.out(1.7)",
+          },
+          "-=0.3",
+        );
+
+        // Stat Counter
+        document
+          .querySelectorAll(".dvg-stat-value[data-target]")
+          .forEach((stat) => {
+            const targetText = stat.getAttribute("data-target");
+            const target = parseInt(targetText);
+            const isCurrency = stat.textContent.includes("$");
+
+            let counter = { val: 0 };
+            gsap.to(counter, {
+              val: target,
+              duration: 1.5,
+              ease: "power3.out",
+              onUpdate: () => {
+                stat.textContent =
+                  (isCurrency ? "$" : "") +
+                  Math.floor(counter.val).toLocaleString();
+              },
+            });
+          });
+      });
+
+      // Form Feedback
+      document.getElementById("saveBtn").onclick = function () {
+        const original = this.textContent;
+        this.textContent = "Updating...";
+        this.disabled = true;
+        setTimeout(() => {
+          this.textContent = "Saved Successfully!";
+          this.style.background = "#2f9e44";
+          setTimeout(() => {
+            this.textContent = original;
+            this.style.background = "";
+            this.disabled = false;
+          }, 2000);
+        }, 800);
+      };
+    </script>
+  </body>
+</html>

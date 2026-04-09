@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>STACKLY | Create Account</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+      :root {
+        --dvgPrimary: #102973;
+        --dvgSecondary: #4c6ef5;
+        --dvgBackground: #f0f3ff;
+        --dvgWhite: #ffffff;
+        --dvgShadow: 0 10px 40px rgba(16, 41, 115, 0.08);
+        --dvgTransition: all 0.3s ease;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background-color: var(--dvgBackground);
+        color: var(--dvgPrimary);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        overflow-x: hidden;
+      }
+
+      .signup-container {
+        width: 100%;
+        max-width: 440px;
+        background: var(--dvgWhite);
+        padding: 32px;
+        border-radius: 24px;
+        box-shadow: var(--dvgShadow);
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      .brand-header {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .brand-logo {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        background: var(--dvgPrimary);
+        color: white;
+        border-radius: 16px;
+        margin-bottom: 16px;
+      }
+
+      .brand-header h1 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      .brand-header p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 4px;
+      }
+
+      .form-group {
+        margin-bottom: 18px;
+      }
+
+      .label-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        color: var(--dvgPrimary);
+      }
+
+      .label-row i {
+        color: var(--dvgSecondary);
+      }
+
+      .label-row label {
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      /* Role Selection Styling */
+      .role-selector {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+        background: #f1f5f9;
+        padding: 4px;
+        border-radius: 12px;
+      }
+
+      .role-option {
+        cursor: pointer;
+        text-align: center;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #64748b;
+        transition: var(--dvgTransition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .role-option.active {
+        background: var(--dvgWhite);
+        color: var(--dvgPrimary);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .input-wrapper input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #edf2f7;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        outline: none;
+        transition: var(--dvgTransition);
+        background: #fcfdfe;
+      }
+
+      .input-wrapper input:focus {
+        border-color: var(--dvgSecondary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(76, 110, 245, 0.1);
+      }
+
+      .password-rules {
+        background: #f8fafc;
+        padding: 12px;
+        border-radius: 12px;
+        margin-bottom: 18px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .password-rules h4 {
+        font-size: 0.75rem;
+        margin-bottom: 6px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .rule-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-bottom: 2px;
+      }
+
+      .rule-item.met {
+        color: #10b981;
+      }
+
+      .signup-btn {
+        width: 100%;
+        padding: 14px;
+        background: var(--dvgPrimary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--dvgTransition);
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .signup-btn:hover {
+        background: var(--dvgSecondary);
+        transform: translateY(-2px);
+      }
+
+      .footer-text {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .footer-text a {
+        color: var(--dvgSecondary);
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      #messageBox {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100px);
+        padding: 12px 24px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      #messageBox.show {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .msg-success {
+        border-left: 4px solid #2f9e44;
+        color: #2f9e44;
+      }
+      .msg-error {
+        border-left: 4px solid #e03131;
+        color: #e03131;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="messageBox"></div>
+
+    <div class="signup-container" id="signupCard">
+      <div class="brand-header">
+        <div class="brand-logo">
+          <i data-lucide="graduation-cap" size="32"></i>
+        </div>
+        <h1>Join STACKLY</h1>
+        <p>Select your role and get started</p>
+      </div>
+
+      <form id="signupForm">
+        <div class="label-row">
+          <i data-lucide="users" size="16"></i>
+          <label>Register as</label>
+        </div>
+        <div class="role-selector" id="roleSelector">
+          <div class="role-option active" data-role="student">
+            <i data-lucide="user" size="14"></i> Student
+          </div>
+          <div class="role-option" data-role="admin">
+            <i data-lucide="shield-check" size="14"></i> Admin
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <i data-lucide="user-plus" size="16"></i>
+            <label for="fullName">Full Name</label>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" id="fullName" placeholder="John Doe" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <i data-lucide="mail" size="16"></i>
+            <label for="email">Email Address</label>
+          </div>
+          <div class="input-wrapper">
+            <input
+              type="email"
+              id="email"
+              placeholder="name@university.edu"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <i data-lucide="lock" size="16"></i>
+            <label for="password">Create Password</label>
+          </div>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="password"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="password-rules">
+          <h4>Password Requirements</h4>
+          <div class="rule-item" id="rule-length">
+            <i data-lucide="circle" size="12"></i> At least 8 characters
+          </div>
+          <div class="rule-item" id="rule-number">
+            <i data-lucide="circle" size="12"></i> At least one number
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <i data-lucide="shield" size="16"></i>
+            <label for="confirmPassword">Confirm Password</label>
+          </div>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="signup-btn" id="submitBtn">
+          <span>Create Account</span>
+          <i data-lucide="arrow-right" size="18"></i>
+        </button>
+      </form>
+
+      <div class="footer-text">
+        Already have an account? <a href="./login.html">Log In</a>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+
+      // Animation on Load
+      window.onload = () => {
+        gsap.to("#signupCard", {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+        });
+      };
+
+      const signupForm = document.getElementById("signupForm");
+      const roleOptions = document.querySelectorAll(".role-option");
+      let selectedRole = "student";
+
+      // Role Selection Logic
+      roleOptions.forEach((opt) => {
+        opt.onclick = () => {
+          roleOptions.forEach((o) => o.classList.remove("active"));
+          opt.classList.add("active");
+          selectedRole = opt.dataset.role;
+        };
+      });
+
+      const passwordInput = document.getElementById("password");
+      const confirmInput = document.getElementById("confirmPassword");
+      const ruleLength = document.getElementById("rule-length");
+      const ruleNumber = document.getElementById("rule-number");
+
+      function showMessage(text, type) {
+        const box = document.getElementById("messageBox");
+        box.textContent = text;
+        box.className = `show msg-${type}`;
+        setTimeout(() => box.classList.remove("show"), 3000);
+      }
+
+      // Live Validation
+      passwordInput.addEventListener("input", () => {
+        const val = passwordInput.value;
+        // Update length rule
+        const isLongEnough = val.length >= 8;
+        ruleLength.classList.toggle("met", isLongEnough);
+        ruleLength
+          .querySelector("i")
+          .setAttribute(
+            "data-lucide",
+            isLongEnough ? "check-circle-2" : "circle",
+          );
+
+        // Update number rule
+        const hasNumber = /\d/.test(val);
+        ruleNumber.classList.toggle("met", hasNumber);
+        ruleNumber
+          .querySelector("i")
+          .setAttribute("data-lucide", hasNumber ? "check-circle-2" : "circle");
+
+        lucide.createIcons();
+      });
+
+      signupForm.onsubmit = (e) => {
+        e.preventDefault();
+        const fullName = document.getElementById("fullName").value;
+        const email = document.getElementById("email").value;
+        const password = passwordInput.value;
+        const confirm = confirmInput.value;
+
+        if (password.length < 8 || !/\d/.test(password)) {
+          showMessage("Please meet password requirements", "error");
+          return;
+        }
+
+        if (password !== confirm) {
+          showMessage("Passwords do not match", "error");
+          confirmInput.style.borderColor = "#e03131";
+          return;
+        }
+
+        // Save user with role
+        const newUser = {
+          fullName,
+          email,
+          password,
+          role: selectedRole,
+          createdAt: new Date().toISOString(),
+        };
+
+        localStorage.setItem("user", JSON.stringify(newUser));
+
+        const btn = document.getElementById("submitBtn");
+        btn.innerHTML = "<span>Creating Account...</span>";
+        btn.disabled = true;
+
+        setTimeout(() => {
+          showMessage(`Welcome, ${fullName}! Account created.`, "success");
+          setTimeout(() => {
+            // Redirect based on role (or common portal)
+            window.location.href = "login.html";
+          }, 1500);
+        }, 1000);
+      };
+
+      confirmInput.oninput = () => (confirmInput.style.borderColor = "#edf2f7");
+    </script>
+  </body>
+</html>

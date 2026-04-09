@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STACKLY | Secure IT Access Portal</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+      :root {
+        --dvgPrimary: #102973;
+        --dvgBackground: #e4ebff;
+        --dvgWhite: #ffffff;
+        --dvgGlass: rgba(255, 255, 255, 0.4);
+        --dvgShadow: 0 10px 40px rgba(16, 41, 115, 0.15);
+        --dvgTransition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        --dvgTextDark: #1a1a1a;
+        --dvgTextLight: #666666;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+
+      body,
+      html {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        background-color: var(--dvgPrimary);
+      }
+
+      .dvg-login-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      /* Background Image Logic */
+      .dvg-bg-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+        opacity: 0;
+      }
+
+      .dvg-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          rgba(16, 41, 115, 0.9) 0%,
+          rgba(10, 20, 50, 0.95) 100%
+        );
+        z-index: 2;
+      }
+
+      /* Login Card */
+      .dvg-login-card {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        max-width: 420px;
+        background: var(--dvgWhite);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: var(--dvgShadow);
+        opacity: 0;
+        transform: translateY(30px);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .dvg-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .dvg-logo {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--dvgPrimary);
+        letter-spacing: -1.5px;
+        margin-bottom: 4px;
+        display: block;
+      }
+
+      .dvg-subtitle {
+        font-size: 0.9rem;
+        color: var(--dvgTextLight);
+        font-weight: 500;
+      }
+
+      /* Form Styling */
+      .dvg-form-group {
+        margin-bottom: 18px;
+        position: relative;
+      }
+
+      .dvg-label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--dvgPrimary);
+        margin-bottom: 8px;
+        padding-left: 2px;
+      }
+
+      .dvg-input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .dvg-input,
+      select.dvg-input {
+        width: 100%;
+        padding: 14px 16px;
+        padding-right: 45px;
+        background: var(--dvgBackground);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        font-size: 1rem;
+        color: var(--dvgTextDark);
+        transition: var(--dvgTransition);
+        appearance: none;
+      }
+
+      .dvg-input:focus {
+        outline: none;
+        border-color: var(--dvgPrimary);
+        background: var(--dvgWhite);
+        box-shadow: 0 0 0 4px rgba(16, 41, 115, 0.1);
+      }
+
+      .dvg-input-icon {
+        position: absolute;
+        right: 16px;
+        color: var(--dvgPrimary);
+        pointer-events: none;
+        width: 18px;
+        height: 18px;
+        opacity: 0.7;
+      }
+
+      /* Checkbox & Links */
+      .dvg-form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0 25px 0;
+        font-size: 0.85rem;
+      }
+
+      .dvg-remember {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--dvgTextLight);
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .dvg-forgot {
+        color: var(--dvgPrimary);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      /* Button */
+      .dvg-btn {
+        width: 100%;
+        padding: 16px;
+        background: var(--dvgPrimary);
+        color: var(--dvgWhite);
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--dvgTransition);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+        z-index: 5;
+      }
+
+      .dvg-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(16, 41, 115, 0.3);
+        background: #0a1f5c;
+      }
+
+      .dvg-btn:active {
+        transform: translateY(-1px);
+      }
+
+      .dvg-footer {
+        margin-top: 25px;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--dvgTextLight);
+      }
+
+      .dvg-footer a {
+        color: var(--dvgPrimary);
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      /* Message Box */
+      #dvgMessage {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100px);
+        background: #102973;
+        color: white;
+        padding: 14px 28px;
+        border-radius: 12px;
+        z-index: 2000;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      #dvgMessage.show {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* Mobile Adjustments */
+      @media (max-width: 480px) {
+        .dvg-login-card {
+          padding: 30px 24px;
+          max-width: 100%;
+        }
+        .dvg-logo {
+          font-size: 1.8rem;
+        }
+        .dvg-btn {
+          padding: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="dvgMessage">Please fill all fields</div>
+
+    <div class="dvg-login-wrapper">
+      <img
+        class="dvg-bg-img"
+        src="./assets/ai.webp"
+        alt="Background"
+        onerror="this.style.backgroundColor = '#102973'"
+      />
+      <div class="dvg-overlay"></div>
+
+      <div class="dvg-login-card" id="loginCard">
+        <header class="dvg-header">
+          <span class="dvg-logo">STACKLY</span>
+          <p class="dvg-subtitle">Secure IT Access Portal</p>
+        </header>
+
+        <form id="dvgLoginForm">
+          <div class="dvg-form-group">
+            <label class="dvg-label" for="dvgRole">Access Level</label>
+            <div class="dvg-input-container">
+              <select id="dvgRole" class="dvg-input" required>
+                <option value="" disabled selected>Select Role</option>
+                <option value="Admin">Admin</option>
+                <option value="Client">Student</option>
+              </select>
+              <i data-lucide="chevron-down" class="dvg-input-icon"></i>
+            </div>
+          </div>
+
+          <div class="dvg-form-group">
+            <label class="dvg-label" for="dvgEmail">Email Address</label>
+            <div class="dvg-input-container">
+              <input
+                type="email"
+                id="dvgEmail"
+                class="dvg-input"
+                placeholder="name@stackly.com"
+                required
+              />
+              <i data-lucide="mail" class="dvg-input-icon"></i>
+            </div>
+          </div>
+
+          <div class="dvg-form-group">
+            <label class="dvg-label" for="dvgPassword">Password</label>
+            <div class="dvg-input-container">
+              <input
+                type="password"
+                id="dvgPassword"
+                class="dvg-input"
+                placeholder="••••••••"
+                required
+              />
+              <i data-lucide="lock" class="dvg-input-icon"></i>
+            </div>
+          </div>
+
+          <div class="dvg-form-options">
+            <label class="dvg-remember">
+              <input type="checkbox" /> Remember me
+            </label>
+            <a href="./404.html" class="dvg-forgot">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="dvg-btn" id="dvgSubmitBtn">
+            <span>Login to Dashboard</span>
+            <i data-lucide="arrow-right" style="width: 18px"></i>
+          </button>
+        </form>
+
+        <footer class="dvg-footer">
+          Don't have an account? <a href="./signup.html">Register</a>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide Icons
+      lucide.createIcons();
+
+      // Custom Message Handler
+      function showMessage(text) {
+        const msg = document.getElementById("dvgMessage");
+        msg.textContent = text;
+        msg.classList.add("show");
+        setTimeout(() => msg.classList.remove("show"), 3000);
+      }
+
+      // GSAP Animations
+      window.addEventListener("load", () => {
+        const tl = gsap.timeline();
+
+        // Reveal background
+        tl.to(".dvg-bg-img", {
+          opacity: 1,
+          duration: 1.2,
+          ease: "power2.inOut",
+        })
+          // Reveal card
+          .to(
+            ".dvg-login-card",
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: "back.out(1.2)",
+            },
+            "-=0.4",
+          )
+          // Stagger form elements
+          .from(
+            ".dvg-header, .dvg-form-group, .dvg-form-options, .dvg-btn, .dvg-footer",
+            {
+              opacity: 0,
+              y: 15,
+              stagger: 0.08,
+              duration: 0.6,
+              ease: "power2.out",
+              clearProps: "all", // Ensure visibility isn't trapped by animation props
+            },
+            "-=0.4",
+          );
+
+        // Subtle Floating Card Animation
+        gsap.to(".dvg-login-card", {
+          y: "-=8",
+          duration: 4,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+      });
+
+      // Form Logic
+      document
+        .getElementById("dvgLoginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const role = document.getElementById("dvgRole").value;
+          const email = document.getElementById("dvgEmail").value;
+
+          if (!role || !email) {
+            showMessage("Please fill all fields");
+            return;
+          }
+
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              role: role,
+              email: email,
+            }),
+          );
+
+          // Button feedback
+          const btn = document.getElementById("dvgSubmitBtn");
+          const btnText = btn.querySelector("span");
+          btnText.textContent = "Verifying...";
+          btn.style.pointerEvents = "none";
+          btn.style.opacity = "0.8";
+
+          setTimeout(() => {
+            if (role === "Admin") {
+              window.location.href = "./admin-dashboard.html";
+            } else if (role === "Client") {
+              window.location.href = "./client-dashboard.html";
+            }
+          }, 1000);
+        });
+
+      // Email Reflection Logic (for use on dashboard pages)
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && document.getElementById("userEmail")) {
+        document.getElementById("userEmail").textContent = user.email;
+      }
+    </script>
+  </body>
+</html>

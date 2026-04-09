@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>404 - Page Not Found | STACKLY</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- GSAP for Professional Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+      :root {
+        --primary: #0066ff;
+        --primary-light: #3b82f6;
+        --primary-dark: #0039a6;
+        --accent: #00c6ff;
+        --bg-dark: #050b18;
+        --bg-card: rgba(255, 255, 255, 0.03);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #ffffff;
+        --text-muted: #9ca3af;
+        --glass-blur: 12px;
+        --transition-smooth: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        touch-action: manipulation;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text);
+        overflow: hidden;
+        height: 100dvh; /* Use dynamic viewport height for mobile browsers */
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Animated Background */
+      .stk-bg-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: radial-gradient(
+          circle at 50% 50%,
+          #0a1631 0%,
+          #050b18 100%
+        );
+        overflow: hidden;
+      }
+
+      .stk-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.3;
+        z-index: 0;
+      }
+
+      .stk-orb-1 {
+        width: 300px;
+        height: 300px;
+        background: var(--primary);
+        top: -10%;
+        left: -10%;
+      }
+      .stk-orb-2 {
+        width: 400px;
+        height: 400px;
+        background: var(--primary-dark);
+        bottom: -10%;
+        right: -10%;
+      }
+      .stk-orb-3 {
+        width: 250px;
+        height: 250px;
+        background: var(--accent);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .stk-particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+      }
+
+      /* Logo Section */
+      .stk-navbar {
+        position: absolute;
+        top: 20px;
+        z-index: 10;
+      }
+
+      @media (min-width: 768px) {
+        .stk-navbar {
+          top: 40px;
+        }
+      }
+
+      .stk-logo {
+        font-weight: 800;
+        font-size: 1.2rem;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        background: linear-gradient(to right, #fff, var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        position: relative;
+      }
+
+      /* Main Content */
+      .stk-main-container {
+        text-align: center;
+        padding: 1.5rem;
+        z-index: 5;
+        max-width: 800px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Animated 404 Number */
+      .stk-error-code {
+        position: relative;
+        font-size: clamp(6rem, 25vw, 14rem);
+        font-weight: 900;
+        line-height: 0.9;
+        margin-bottom: 0.5rem;
+        letter-spacing: -2px;
+        color: rgba(255, 255, 255, 0.05);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        -webkit-background-clip: text;
+        display: inline-block;
+      }
+
+      @media (min-width: 768px) {
+        .stk-error-code {
+          letter-spacing: -5px;
+          margin-bottom: 1rem;
+        }
+      }
+
+      .stk-glitch-wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        z-index: 2;
+      }
+
+      .stk-glitch-text {
+        font-size: clamp(6rem, 25vw, 14rem);
+        font-weight: 900;
+        color: white;
+        text-shadow: 0 0 15px rgba(0, 102, 255, 0.4);
+        position: relative;
+        display: block;
+      }
+
+      /* Illustration SVG */
+      .stk-floating-illustration {
+        position: absolute;
+        width: clamp(60px, 15vw, 100px);
+        height: clamp(60px, 15vw, 100px);
+        top: -15%;
+        right: -5%;
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      /* Typography */
+      .stk-heading {
+        font-size: clamp(1.4rem, 6vw, 2.5rem);
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(to bottom, #fff, #b4b4b4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        padding: 0 10px;
+      }
+
+      .stk-subtext {
+        color: var(--text-muted);
+        font-size: clamp(0.9rem, 3vw, 1.1rem);
+        line-height: 1.5;
+        margin-bottom: 2rem;
+        max-width: 450px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 20px;
+      }
+
+      @media (min-width: 768px) {
+        .stk-subtext {
+          margin-bottom: 3rem;
+          line-height: 1.6;
+        }
+      }
+
+      /* Buttons & Interactions */
+      .stk-button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+        max-width: 320px;
+        position: relative;
+        z-index: 20;
+      }
+
+      @media (min-width: 640px) {
+        .stk-button-group {
+          flex-direction: row;
+          max-width: none;
+          gap: 1.5rem;
+        }
+      }
+
+      .stk-btn {
+        position: relative;
+        padding: 0.9rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        width: 100%;
+      }
+
+      @media (min-width: 640px) {
+        .stk-btn {
+          width: auto;
+          min-width: 180px;
+          padding: 1rem 2.5rem;
+        }
+      }
+
+      .stk-btn-primary {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 10px 30px rgba(0, 102, 255, 0.2);
+      }
+
+      .stk-btn-secondary {
+        background: var(--bg-card);
+        color: white;
+        border-color: var(--border);
+        backdrop-filter: blur(var(--glass-blur));
+      }
+
+      .stk-btn:active {
+        transform: scale(0.96);
+      }
+
+      @media (hover: hover) {
+        .stk-btn:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 15px 40px rgba(0, 102, 255, 0.4);
+        }
+        .stk-btn-secondary:hover {
+          background: rgba(255, 255, 255, 0.08);
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+      }
+
+      /* Underline Effect */
+      .stk-nav-link {
+        position: relative;
+        color: white;
+        text-decoration: none;
+        margin-top: 2rem;
+        display: inline-block;
+        font-size: 0.85rem;
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+        z-index: 20;
+      }
+
+      .stk-nav-link::after {
+        content: "";
+        position: absolute;
+        width: 0%;
+        height: 1px;
+        bottom: -4px;
+        left: 0;
+        background: var(--accent);
+        transition: width 0.3s ease;
+      }
+
+      @media (hover: hover) {
+        .stk-nav-link:hover {
+          opacity: 1;
+        }
+        .stk-nav-link:hover::after {
+          width: 100%;
+        }
+      }
+
+      /* Magnetic Wrapper */
+      .stk-magnetic-wrap {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+      }
+
+      @media (min-width: 640px) {
+        .stk-magnetic-wrap {
+          width: auto;
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Background Elements -->
+    <div class="stk-bg-container">
+      <div class="stk-orb stk-orb-1"></div>
+      <div class="stk-orb stk-orb-2"></div>
+      <div class="stk-orb stk-orb-3"></div>
+      <canvas id="stk-particle-canvas" class="stk-particles"></canvas>
+    </div>
+
+    <!-- Top Navigation -->
+    <!-- <nav class="stk-navbar">
+      <div class="stk-logo">STACKLY</div>
+    </nav> -->
+
+    <!-- Content -->
+    <main class="stk-main-container">
+      <div class="stk-parallax-layer">
+        <div class="stk-error-code">
+          404
+          <div class="stk-glitch-wrapper">
+            <span class="stk-glitch-text" id="code-reveal">404</span>
+          </div>
+
+          <!-- Floating Illustration -->
+          <svg
+            class="stk-floating-illustration"
+            viewBox="0 0 200 200"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="100"
+              cy="100"
+              r="80"
+              stroke="url(#paint0_linear)"
+              stroke-width="2"
+              stroke-dasharray="10 10"
+            />
+            <path
+              d="M70 100L90 120L130 80"
+              stroke="#00c6ff"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <defs>
+              <linearGradient
+                id="paint0_linear"
+                x1="20"
+                y1="20"
+                x2="180"
+                y2="180"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#0066ff" stop-opacity="0" />
+                <stop offset="0.5" stop-color="#00c6ff" />
+                <stop offset="1" stop-color="#0066ff" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <h1 class="stk-heading">Something's Missing.</h1>
+      <p class="stk-subtext">
+        The course you're looking for doesn't exist or has been moved to a
+        different coordinate.
+      </p>
+
+      <div class="stk-button-group">
+        <div class="stk-magnetic-wrap">
+          <a href="./index.html" class="stk-btn stk-btn-primary"
+            >Back to Home</a
+          >
+        </div>
+        <div class="stk-magnetic-wrap">
+          <a href="./event.html" class="stk-btn stk-btn-secondary"
+            >Explore Events</a
+          >
+        </div>
+      </div>
+
+      <!-- <a href="#" class="stk-nav-link">Contact Support Center</a> -->
+    </main>
+
+    <script>
+      // --- Particle System ---
+      const canvas = document.getElementById("stk-particle-canvas");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+
+      function initParticles() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        particles = [];
+        // Reduced count on mobile for performance
+        const particleCount = window.innerWidth < 768 ? 30 : 60;
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 2 + 1,
+            speedX: Math.random() * 0.4 - 0.2,
+            speedY: Math.random() * 0.4 - 0.2,
+            opacity: Math.random() * 0.4,
+          });
+        }
+      }
+
+      function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p) => {
+          p.x += p.speedX;
+          p.y += p.speedY;
+
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
+
+          ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        requestAnimationFrame(animateParticles);
+      }
+
+      window.addEventListener("resize", initParticles);
+      initParticles();
+      animateParticles();
+
+      // --- GSAP Animations ---
+      window.addEventListener("DOMContentLoaded", () => {
+        const tl = gsap.timeline();
+
+        gsap.set(
+          [
+            ".stk-logo",
+            "#code-reveal",
+            ".stk-heading",
+            ".stk-subtext",
+            ".stk-btn",
+            ".stk-nav-link",
+          ],
+          {
+            opacity: 0,
+            y: (i, target) =>
+              target.classList.contains("stk-logo") ? -30 : 20,
+          },
+        );
+
+        tl.to(".stk-logo", { y: 0, opacity: 1, duration: 1, ease: "expo.out" })
+          .to(
+            "#code-reveal",
+            {
+              scale: 1,
+              opacity: 1,
+              y: 0,
+              duration: 1.2,
+              ease: "elastic.out(1, 0.6)",
+              onStart: () => gsap.set("#code-reveal", { scale: 0.8 }),
+              onComplete: startGlitch,
+            },
+            "-=0.6",
+          )
+          .to(
+            ".stk-heading",
+            { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
+            "-=0.8",
+          )
+          .to(
+            ".stk-subtext",
+            { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
+            "-=0.6",
+          )
+          .to(
+            ".stk-btn",
+            {
+              y: 0,
+              opacity: 1,
+              stagger: 0.1,
+              duration: 0.6,
+              ease: "power3.out",
+            },
+            "-=0.4",
+          )
+          .to(".stk-nav-link", { opacity: 0.6, duration: 0.8 }, "-=0.2");
+
+        // Ambient Orbs
+        gsap.to(".stk-orb-1", {
+          x: 50,
+          y: 30,
+          duration: 15,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+        gsap.to(".stk-orb-2", {
+          x: -70,
+          y: -40,
+          duration: 20,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+
+        gsap.to(".stk-floating-illustration", {
+          y: 10,
+          rotation: 8,
+          duration: 4,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+      });
+
+      // --- Glitch Effect ---
+      function startGlitch() {
+        const glitchText = document.getElementById("code-reveal");
+        setInterval(() => {
+          if (Math.random() > 0.97) {
+            gsap.to(glitchText, {
+              skewX: 15,
+              duration: 0.1,
+              onComplete: () => gsap.set(glitchText, { skewX: 0 }),
+            });
+            gsap.to(glitchText, {
+              x: Math.random() * 6 - 3,
+              duration: 0.04,
+              repeat: 2,
+              yoyo: true,
+              onComplete: () => gsap.set(glitchText, { x: 0 }),
+            });
+          }
+        }, 300);
+      }
+
+      // --- Interaction Handlers (Mouse Only) ---
+      if (window.matchMedia("(hover: hover)").matches) {
+        document.addEventListener("mousemove", (e) => {
+          const { clientX, clientY } = e;
+          const moveX = (clientX - window.innerWidth / 2) / 60;
+          const moveY = (clientY - window.innerHeight / 2) / 60;
+
+          gsap.to(".stk-parallax-layer", {
+            x: moveX,
+            y: moveY,
+            duration: 1.2,
+            ease: "power2.out",
+          });
+          gsap.to(".stk-orb", {
+            x: moveX * 4,
+            y: moveY * 4,
+            duration: 2,
+            ease: "power1.out",
+          });
+        });
+
+        document.querySelectorAll(".stk-magnetic-wrap").forEach((wrap) => {
+          const btn = wrap.querySelector(".stk-btn");
+          wrap.addEventListener("mousemove", (e) => {
+            const rect = wrap.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            gsap.to(btn, { x: x * 0.4, y: y * 0.4, duration: 0.3 });
+          });
+          wrap.addEventListener("mouseleave", () => {
+            gsap.to(btn, {
+              x: 0,
+              y: 0,
+              duration: 0.6,
+              ease: "elastic.out(1, 0.3)",
+            });
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
